@@ -1,0 +1,7 @@
+To compile
+--------------
+gcc -o <file name> file.c
+
+To run
+--------------
+./<file name>
