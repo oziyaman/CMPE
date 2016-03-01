@@ -4,4 +4,4 @@
 
  or
 
- consult('/path/to/file.pl').
+* consult('/path/to/file.pl').
