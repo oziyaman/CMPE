@@ -1,0 +1,28 @@
+
+Name:		FURKAN
+Last name:	KARAKOYUNLU
+Student ID:	112200036
+University:	BILGI ÜNI
+Department:	BILGISAYAR MÜH
+========================================
+
+Name:		furkan
+Last name:	karakoyunlu
+Student ID:	112200036
+University:	bilgi üni
+Department:	bilgisayar müh
+========================================
+
+Name:		DFBDFBDF
+Last name:	FDBDFBDFB
+Student ID:	345345
+University:	VFGGCFBDFB
+Department:	DFBDFBDFB
+========================================
+
+Name:		ASD
+Last name:	ASD
+Student ID:	123
+University:	ASD
+Department:	ASD
+========================================
