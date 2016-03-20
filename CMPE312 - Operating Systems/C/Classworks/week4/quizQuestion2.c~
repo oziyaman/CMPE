@@ -1,0 +1,89 @@
+/*
+	CMPE312 : Operating Systems
+	Author: Furkan Karakoyunlu / 112200036
+	week4
+	Quiz Question#1
+*/
+
+#include <stdio.h>
+#define SIZE 50
+
+void compareCharArrays(){
+	char a[SIZE];
+	char b[SIZE];
+	char *p1;
+	char *p2;
+
+	p1 = a;
+	p2 = b;
+
+	printf("Enter your pattern-1: ");
+	scanf("%s", a);
+
+	printf("Enter your pattern-2: ");
+	scanf("%s", b);
+
+	int i;
+	int j;
+	int f = 0;
+	int commonCount = 0;
+	int count = 0;
+	char commonChars[SIZE];
+
+	for(i = 0; a[i] != '\0'; i++){
+		for(j = 0; b[j] != '\0'; j++){
+			if(*(p1 + i) == *(p2 + j)){
+				count++;
+				commonChars[f++] = *(p1+i);
+			}
+		}
+		if(count > 0){
+			commonCount++;
+		}
+		count = 0;
+	}
+	printf("\nNumbers of common char between (%s) and (%s) is: %d\n", a, b, commonCount);
+
+	printf("%s\n", commonChars);
+
+
+	// counting unique items in commonChars
+	char finalCommonChars[10];
+	int k;
+	int l;
+	int m = 0;
+	int flag = 0;
+	for(k = 0; commonChars[k] != '\0'; k++){
+		for(l = 0; l < k; l++){
+			if(commonChars[k] == commonChars[l]){
+				flag++;
+			}
+		}
+		if(flag == 0){
+			finalCommonChars[m++] = commonChars[k];
+		}
+		flag = 0;
+	}
+
+	printf("%s\n", finalCommonChars);
+
+
+
+	// finding addresses of the letters
+	int o;
+	int r;
+	for(o = 0; a[o] != '\0'; o++){
+		for(r = 0; finalCommonChars[r] != '\0'; r++){
+			if(a[o] == finalCommonChars[r]){
+				printf("%p , ", &a[o]);
+			}
+		}
+		
+	}
+
+}
+
+int main(void){
+	compareCharArrays();
+	return 0;
+}
