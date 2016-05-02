@@ -1,36 +1,52 @@
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.prefs.Preferences;
 
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 
 public class App extends JFrame {
 
-	private JTextField txt_weight;
-	private JTextField txt_height;
+	private JTextField txt_weight, txt_height;
 	private JLabel lbl_bmi;
-	private JButton btn_calculate;
-	private JButton btn_reset;
+	private JButton btn_calculate, btn_reset, btn_save, btn_exit;
 
 	private JMenuBar menuBar;
+
+	private JRadioButtonMenuItem mItem_guestUser, mItem_userProfiles;
+
+	// user preferences
+	Preferences userPref = Preferences.userRoot().node("~/custom/root");
 
 	public static void main(String[] args) {
 		new App();
 	}
 
 	public App() {
-		setLayout(new GridLayout(4, 2));
+		// reset user preferences
+		userPref.remove("USER");
+
+		setLayout(new GridLayout(5, 2));
 
 		JLabel lbl_weight = new JLabel("Weight");
 		JLabel lbl_height = new JLabel("Height");
@@ -51,12 +67,30 @@ public class App extends JFrame {
 			}
 		});
 
+		btn_save = new JButton("Save");
+		btn_save.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save();
+			}
+		});
+
 		btn_reset = new JButton("Reset");
 		btn_reset.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clear();
+			}
+		});
+
+		btn_exit = new JButton("Exit");
+		btn_exit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exit();
 			}
 		});
 
@@ -114,12 +148,10 @@ public class App extends JFrame {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
@@ -143,7 +175,36 @@ public class App extends JFrame {
 			}
 		});
 
+		JMenu mProfile = new JMenu("Profile");
+
+		mItem_guestUser = new JRadioButtonMenuItem("Guest user", true);
+		mItem_guestUser.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userPref.remove("USER");
+
+			}
+		});
+
+		mItem_userProfiles = new JRadioButtonMenuItem("User profiles");
+		mItem_userProfiles.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new UserProfiles();
+			}
+		});
+
+		ButtonGroup mItem_group = new ButtonGroup();
+		mItem_group.add(mItem_guestUser);
+		mItem_group.add(mItem_userProfiles);
+
+		mProfile.add(mItem_userProfiles);
+		mProfile.add(mItem_guestUser);
+
 		menuBar.add(menu);
+		menuBar.add(mProfile);
 
 		add(lbl_weight);
 		add(txt_weight);
@@ -156,9 +217,14 @@ public class App extends JFrame {
 
 		add(btn_calculate);
 		add(btn_reset);
+		add(btn_save);
+		add(btn_exit);
 
 		// setting the menu bar of the app
 		setJMenuBar(menuBar);
+
+		// configuring the placeholders
+		configurePlaceHolders();
 
 		// initializing our app
 		initializeApp();
@@ -169,7 +235,7 @@ public class App extends JFrame {
 	 */
 	public void initializeApp() {
 		this.setTitle("BMI Calculator | 112200036");
-		this.setSize(300, 180);
+		this.setSize(450, 180);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
@@ -177,13 +243,53 @@ public class App extends JFrame {
 	}
 
 	/**
+	 * This method configures the placeholders for text areas
+	 */
+	public void configurePlaceHolders() {
+		txt_weight.setText("Your weight in kilogram (Ex: 70)");
+		txt_weight.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txt_weight.getText().toString().trim().equals("")) {
+					txt_weight.setText("Your weight in kilogram (Ex: 70)");
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txt_weight.getText().toString().trim().equals("Your weight in kilogram (Ex: 70)")) {
+					txt_weight.setText("");
+				}
+			}
+		});
+
+		txt_height.setText("Your height in centimeter (Ex: 180)");
+		txt_height.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (txt_height.getText().toString().trim().equals("")) {
+					txt_height.setText("Your height in centimeter (Ex: 180)");
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (txt_height.getText().toString().trim().equals("Your height in centimeter (Ex: 180)")) {
+					txt_height.setText("");
+				}
+			}
+		});
+	}
+
+	/**
 	 * Body Mass Index Formula Body weight in kilograms divided by height in
-	 * meters squared or, 
-	 * 	
-	 * 		BMI = x KG / (y M * y M) where: 
+	 * meters squared or,
 	 * 
-	 * x=bodyweight in KG
-	 * y=height in m
+	 * BMI = x KG / (y M * y M) where:
+	 * 
+	 * x=bodyweight in KG y=height in m
 	 * 
 	 * 
 	 * @param weight
@@ -206,7 +312,8 @@ public class App extends JFrame {
 	}
 
 	/**
-	 * This method calculates the BMI by using calculateBMI(weight, height) method.
+	 * This method calculates the BMI by using calculateBMI(weight, height)
+	 * method.
 	 */
 	private void calculate() {
 		try {
@@ -218,18 +325,68 @@ public class App extends JFrame {
 			// if bmi was calculated successfully change the lbl_bmi
 			if (bmi != null) {
 				lbl_bmi.setText(bmi + "");
+
+				File imageCheck = new File("normal.png");
+				if (imageCheck.exists() && !imageCheck.isDirectory()) {
+					new BMIViwer(bmi);
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Something wrong with the source images. BMI viewer will not start!!",
+							"Source Image Absent", JOptionPane.INFORMATION_MESSAGE);
+				}
+
 			}
 		} catch (NumberFormatException e2) {
-			JOptionPane.showMessageDialog(null, "Enter legal numbers!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Enter legal numbers!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	/**
+	 * This method saves the results in a text file for user
+	 */
+	private void save() {
+		// getting the username
+		String defaultUser = "guest";
+		String user = userPref.get("USER", defaultUser);
+
+		// Creating the users directory
+		File usersDir = new File("users");
+		if (!usersDir.exists()) {
+			usersDir.mkdir();
+		}
+
+		String calculatedBMI = lbl_bmi.getText().toString();
+
+		if (!calculatedBMI.matches("") && !calculatedBMI.matches("saved")) {
+			File file = new File("users/" + user);
+			try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+				String str = txt_weight.getText().toString() + "\t\t" + txt_height.getText().toString() + "\t\t"
+						+ lbl_bmi.getText().toString();
+
+				bw.write(str);
+				bw.newLine();
+
+				bw.flush();
+				bw.close();
+			} catch (Exception e) {
+				System.out.println("Error while writing the file: " + e);
+			}
+
+			clear();
+			lbl_bmi.setText("saved");
+		} else {
+			JOptionPane.showMessageDialog(this, "Please calculate bmi first!", "Error",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+
 	}
 
 	/**
 	 * This method clears the text fields
 	 */
 	private void clear() {
-		txt_weight.setText("");
-		txt_height.setText("");
+		txt_weight.setText("Your weight in kilogram (Ex: 70)");
+		txt_height.setText("Your height in centimeter (Ex: 180)");
 		lbl_bmi.setText("");
 	}
 
