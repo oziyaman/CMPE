@@ -1,0 +1,261 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[margin=2cm,bottom=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\begin{document}
+\begin{titlepage}
+ \vspace*{2cm}
+ \centering
+ {\scshape\LARGE Istanbul Bilgi University\\}
+ \vspace{1cm}
+ {\scshape\Large Department of Computer Engineering\\}
+ \vspace{4cm}
+ {\huge\bfseries THE DINING PHILOSOPHERS PROBLEM\\}
+ \vspace{3cm}
+ {\Large\itshape Furkan Karakoyunlu\\112200036\\}
+ \vfill
+ \vfill
+ {\large \today\\}
+\end{titlepage}
+
+\section*{About the Problem}
+ \begin{flushleft}
+  The \textbf{dining philosophers} problem is invented by the Dijkstra. In this problem we have five philosophers who can do only
+  thinking and eating. In the room there is a circular table with five chairs. The table has five plates for the philosophers. 
+  However there are only five forks available. Philosophers can eat only with two forks. Each philosopher thinks and when s/he 
+  gets hungry, eats the food with two forks which are closest to the philosopher. If a philosopher tooks the forks and eats 
+  for a while s/he puts down the forks and starts thinking.\\
+  \bigskip
+  Philosophers have a thinking process for a while and they can not talk to each other.
+ \end{flushleft}
+ 
+ \section*{Main Problems}
+ \begin{flushleft}
+  If all the philosophers take the right or left forks, they all have one fork and can not eat. If they try to pick the nearest 
+  two fork, which one takes the two fork first can eat the food. In this situation there is no guarantee.\\
+  \bigskip
+  If all philosophers take one fork, they can not eat or they all put down the forks in order to other philosopher can eat, 
+  again they can not eat. These problems called \emph{starvation}.\\
+  \bigskip
+  According to these situations every philosopher has a possibility to eat but it can not be guaranteed. For instance, one 
+  of the philosopher may remain hungry in all cases.\\
+  \bigskip
+  Another big problem is deadlocks. If the each philosopher performs$^1$;
+  \begin{itemize}
+   \item think until the left fork is available; when it is, pick it up;
+   \item think until the right fork is available; when it is, pick it up;
+   \item when both forks are held, eat for a fixed amount of time;
+   \item then, put the right fork down;
+   \item then, put the left fork down;
+   \item repeat from the beginning.
+  \end{itemize}
+  these actions causes \emph{deadlock}. For instance, a philosopher who took a fork, waits for another philosopher to put down the fork
+  to put down the forks. (It seems complicated but it is not.) It locks the system.
+ \end{flushleft}
+ \pagebreak
+ \section*{Solutions}
+ \subsection*{Arbitrator Solution}
+  \begin{flushleft}
+   This solution guarantee that a philosopher can pick up two forks or none by asking permission from arbitrator. We can 
+   think arbitrator as a waiter. In order to pick up the forks a philosopher must ask permission. If the waiter gives 
+   the permission, philosopher can eat. The waiter gives permission to only one philosopher at a time. If a philosopher 
+   is busy with eating and one of the other philosopher is requesting to pick up forks s/he must wait until other philosophers 
+   request is done. We can implement the waiter as a \underline{mutex}. 
+  \end{flushleft}
+ 
+ \subsection*{Resource Hierarchy Solution}
+ \begin{flushleft}
+  This solution is the originally proposed by Dijkstra. It assigns numbers to forks 1 to 5. Philosophers can pick up the 
+  lower numbered forks first. And the order in which each philosopher puts down the forks does not matter. In this situation 
+  if four philosopher pick up their lower numbered fork simultaneously, only the fork which is number 5 will remain on the 
+  table. Thus the fifth philosopher will not be able to pick up any fork. It can be listed as$^2$:
+  \begin{itemize}
+   \item philosopher\#1 picks up fork\#1
+   \item philosopher\#2 picks up fork\#2
+   \item philosopher\#3 picks up fork\#3
+   \item philosopher\#4 picks up fork\#4
+   \item philosopher\#5 can not pick up fork\#5! Because s/he will need two forks and needs to pick up the lower numbered 
+   fork first.
+  \end{itemize}
+  So the fork\#5 goes to philosopher\#4 - \emph{no deadlocks!}\\
+  If we have fork\#3 and \#5. We decide we need fork\#2. Forks\#3 and \#5 are higher numbers. So we will have to do:
+  \begin{itemize}
+   \item put down fork\#5
+   \item put down fork\#3 (the order you put these down in does not matter)
+   \item pick up fork\#2
+   \item pick up fork\#3
+   \item pick up fork\#5
+  \end{itemize}
+  It's slow!
+ \end{flushleft}
+ \pagebreak
+ \subsection*{Chandy/Misra Solution}
+ \begin{flushleft}
+  This solution removes the central decision mechanism. However it violates the ``philosophers do not speak with each other" 
+  rule. The solution consists of these steps:
+  \begin{itemize}
+   \item[1] Produce a fork for a pair of philosophers. Give this fork to the lower numbered philosopher. Every fork can 
+   be clean or dirty. Initially every fork is dirty.
+   \item[2] If a philosopher wants to eat s/he must use neighbor forks and sends a request for forks that s/he does not have.
+   \item[3] If a philosopher gets a request, s/he checks the status of the forks and if they are clean s/he continues 
+   to use them but if they are dirty, s/he puts down the forks.
+   \item[4] Philosopher marks the fork as a dirty after eating. However, if another philosopher requested the forks, s/he 
+   cleans the forks and then puts them down.
+  \end{itemize}
+  We can explain this algorithm in this way, firstly we add a status to forks. According to this a fork can be clean or dirty. And it is 
+  decided with demands. If there is no request to a fork, it stays clean but if there is a request on a fork it's status 
+  changed to dirty. In this case we prevent another philosopher's request. Every fork can be used by philosopher who requested 
+  it, so there is an assignment to philosophers who will use the forks. Beside, in order to complete fork request fork assignments 
+  must be done. 
+ \end{flushleft}
+ \pagebreak
+ 
+ \section*{Selected Solution}
+ \begin{flushleft}
+  I will choose the ``Arbitrator Solution" which solves the problem by using an arbitrator. (We can think arbitrator as a waiter) My reason for choosing this solution, 
+  is -in my opinion- easy to implement and is logical way to solve the problem.\\
+  \bigskip
+  This approach guarantees that a philosopher can pick up two forks or none by asking permission from arbitrator.\\
+  \begin{figure}[h]
+   \centering
+   \includegraphics{figure.png}
+   \caption{The Dining Philosophers Scenario$^4$}
+  \end{figure}
+  \bigskip
+  I wrote a pseudocode for this solution in below;\\
+  \begin{verbatim}
+   constant N = 5 //philosopher count
+
+   do {
+      for each philosopher
+         think()
+         when hungry:
+            if(available){  //if philosopher has the permission to eat
+               //for i th philosopher
+               think(i)
+               lock(fork_right)
+               lock(fork_left)
+               eat(i)
+               unlock(fork_right)
+               unlock(fork_left)
+            }
+   }while(1)
+  \end{verbatim}
+  \pagebreak
+  The implementation of dining philosophers problem with arbitrator solution in C is;\\
+  \begin{verbatim}
+/*
+   Problem:
+      THE DINING PHILOSOPHERS PROBLEM
+      Arbitrator(Conductor) Solution
+      
+   Author:
+      +--------------------+
+      | Furkan KARAKOYUNLU |
+      |     112200036      |
+      +--------------------+
+*/
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h> /* need it for booleans */
+#define PHIL_COUNT 5
+
+typedef struct {
+   pthread_mutex_t *fork_left, *fork_right;
+   pthread_t thread;
+   int position;
+} Philosopher;
+
+typedef struct {
+   pthread_t thread;
+} Waiter;
+
+void *waiterWork(void *params);
+void think(int p);
+void eat(int p);
+
+/* checking the availability of eating action */
+bool isAvailable = 1;
+
+void *waiterWork(void *p){
+   Waiter *wtr = (Waiter*)p;
+   pthread_mutex_t *fork_right, *fork_left;
+
+   /* If no one is eating */
+   while(isAvailable){
+      int i;
+      Philosopher *phil = (Philosopher*)p;
+      for(i = 0; i < PHIL_COUNT; i++){			
+         fork_left = phil->fork_left;
+         fork_right = phil->fork_right;
+
+         think(phil->position);
+
+         
+         /* Locking forks for one philosopher */
+         pthread_mutex_lock(fork_right);
+         pthread_mutex_lock(fork_left);
+         /* Eating action*/
+         eat(phil->position);
+         /* Unlocking the forks for other philosophers*/
+         pthread_mutex_unlock(fork_right);
+         pthread_mutex_unlock(fork_left);
+
+         isAvailable = 0;
+      }
+      think(phil->position);
+      pthread_exit(NULL);
+   }
+}
+
+/* Thinking process */
+void think(int p){
+   printf("Philosopher%d is thinking..\n", p);
+}
+
+/* Eating process */
+void eat(int p){
+   printf("Philosopher%d is eating..\n", p);
+   isAvailable = 1;
+}
+
+int main(){
+   /* creating philosophers array */
+   pthread_t philosophers[PHIL_COUNT];
+
+   int i;
+   for(i = 0; i< PHIL_COUNT; i++){
+      Philosopher *phil = malloc(sizeof(Philosopher));
+      phil->position = i;
+
+      /* creating threads */
+      pthread_create(&philosophers[i], NULL, waiterWork, (void *)phil);
+      }
+
+      pthread_exit(NULL);
+      return 0;
+}
+  \end{verbatim}
+  The logic that I want to implement is, there is a waiter and a philosopher as a structure. The waiter monitors the 
+  status of the philosophers and the forks. It gives permission to eat one philosopher at a time. It checks 
+  this situation from \verb|isAvailable| boolean variable. If \verb|1| waiter can allow one philosopher to eat, if \verb|0| 
+  there is already a philosopher eating. Thus it won't give permission to another philosopher. However, my code won't work properly. I did a lot of search about this topic but can't find a proper 
+  solution in this way.
+ \end{flushleft}
+ 
+  \begin{thebibliography}{9}
+  \bibitem{wikipedia}
+    \url{https://en.wikipedia.org/wiki/Dining_philosophers_problem}
+  \bibitem{adit.io}
+    \url{http://adit.io/posts/2013-05-11-The-Dining-Philosophers-Problem-With-Ron-Swanson.html}
+  \bibitem{bilgisayarkavramlari}
+    \url{http://bilgisayarkavramlari.sadievrenseker.com/2012/01/22/filozoflarin-aksam-yemegi-dining-philosophers/}
+  \bibitem{Oracle}
+    \url{https://docs.oracle.com/cd/E18659_01/html/821-2124/figures/figure2.png}
+ \end{thebibliography}
+
+
+\end{document}
