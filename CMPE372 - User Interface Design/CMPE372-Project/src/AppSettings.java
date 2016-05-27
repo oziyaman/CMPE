@@ -23,7 +23,7 @@ public class AppSettings extends JFrame {
 
 	private JTextField txt_username;
 	private JButton btn_save, btn_exit;
-	private JSlider sldr_numberOfBalls, sldr_periodOfGame, sldr_speedOfBalls, sldr_speedOfBasket;
+	private JSlider sldr_numberOfBalls, sldr_periodOfGame, sldr_speedOfBalls, sldr_speedOfBasket, sldr_sizeOfBalls;
 
 	// user preferences
 	Preferences userPref = Preferences.userRoot().node("~/BallCatchingGame/root");
@@ -31,7 +31,7 @@ public class AppSettings extends JFrame {
 	private Font font = new Font("Sans serif", Font.PLAIN, 18);
 
 	public static void main(String[] args) {
-		// new AppSettings();
+		//new AppSettings();
 	}
 
 	public AppSettings() {
@@ -53,6 +53,7 @@ public class AppSettings extends JFrame {
 		JPanel row3 = new JPanel();
 		JPanel row4 = new JPanel();
 		JPanel row5 = new JPanel();
+		JPanel row6 = new JPanel();
 
 		txt_username = new JTextField(10);
 		txt_username.setFont(font);
@@ -63,30 +64,35 @@ public class AppSettings extends JFrame {
 		JLabel lbl_periodOfGame = new JLabel("Period of game");
 		JLabel lbl_speedOfBalls = new JLabel("Speed of balls");
 		JLabel lbl_speedOfBasket = new JLabel("Speed of basket");
+		JLabel lbl_sizeOfBalls = new JLabel("Size of balls");
 
 		lbl_username.setFont(font);
 		lbl_numberOfBalls.setFont(font);
 		lbl_periodOfGame.setFont(font);
 		lbl_speedOfBalls.setFont(font);
 		lbl_speedOfBasket.setFont(font);
+		lbl_sizeOfBalls.setFont(font);
 
 		configureLabelForegroundColor(lbl_username);
 		configureLabelForegroundColor(lbl_periodOfGame);
 		configureLabelForegroundColor(lbl_numberOfBalls);
 		configureLabelForegroundColor(lbl_speedOfBalls);
 		configureLabelForegroundColor(lbl_speedOfBasket);
+		configureLabelForegroundColor(lbl_sizeOfBalls);
 
 		sldr_numberOfBalls = new JSlider(JSlider.HORIZONTAL, 3, 10, 5); // min
 																		// max
 																		// initial
-		sldr_periodOfGame = new JSlider(JSlider.HORIZONTAL, 1, 5, 3);
-		sldr_speedOfBalls = new JSlider(JSlider.HORIZONTAL, 10, 100, 30);
-		sldr_speedOfBasket = new JSlider(JSlider.HORIZONTAL, 10, 100, 30);
+		sldr_periodOfGame = new JSlider(JSlider.HORIZONTAL, 30, 60, 30);
+		sldr_speedOfBalls = new JSlider(JSlider.HORIZONTAL, 1, 5, 2);
+		sldr_speedOfBasket = new JSlider(JSlider.HORIZONTAL, 1, 5, 2);
+		sldr_sizeOfBalls = new JSlider(JSlider.HORIZONTAL, 25, 100, 50);
 
 		configureBackgroundColorOfJSlider(sldr_numberOfBalls);
 		configureBackgroundColorOfJSlider(sldr_periodOfGame);
 		configureBackgroundColorOfJSlider(sldr_speedOfBalls);
 		configureBackgroundColorOfJSlider(sldr_speedOfBasket);
+		configureBackgroundColorOfJSlider(sldr_sizeOfBalls);
 
 		btn_save = new JButton("Save");
 		btn_exit = new JButton("Exit");
@@ -125,18 +131,27 @@ public class AppSettings extends JFrame {
 		row5.setBounds(25, 340, 350, 30);
 		lbl_speedOfBasket.setBounds(0, 0, 150, 30);
 		sldr_speedOfBasket.setBounds(150, 0, 200, 30);
+		
+		row6.add(lbl_sizeOfBalls);
+		row6.add(sldr_sizeOfBalls);
+		row6.setLayout(null);
+		row6.setBounds(25, 380, 350, 30);
+		lbl_sizeOfBalls.setBounds(0, 0, 150, 30);
+		sldr_sizeOfBalls.setBounds(150, 0, 200, 30);
 
 		configureBackgroundColorOfJPanel(row1);
 		configureBackgroundColorOfJPanel(row2);
 		configureBackgroundColorOfJPanel(row3);
 		configureBackgroundColorOfJPanel(row4);
 		configureBackgroundColorOfJPanel(row5);
+		configureBackgroundColorOfJPanel(row6);
 
 		add(row1);
 		add(row2);
 		add(row3);
 		add(row4);
 		add(row5);
+		add(row6);
 
 		btn_save = new JButton("Save");
 		btn_exit = new JButton("Exit");
@@ -147,11 +162,11 @@ public class AppSettings extends JFrame {
 		configureButtons(btn_save);
 		configureButtons(btn_exit);
 
-		btn_save.setBounds(50, 400, 150, 50);
+		btn_save.setBounds(50, 430, 150, 50);
 		btn_save.setBackground(new Color(46, 204, 113));
 		add(btn_save);
 
-		btn_exit.setBounds(200, 400, 150, 50);
+		btn_exit.setBounds(200, 430, 150, 50);
 		btn_exit.setBackground(new Color(231, 76, 60));
 		add(btn_exit);
 
@@ -162,8 +177,9 @@ public class AppSettings extends JFrame {
 																					// empty
 		sldr_periodOfGame.setValue(userPref.getInt("PERIOD_OF_GAME", 3));
 		sldr_numberOfBalls.setValue(userPref.getInt("NUMBER_OF_BALLS", 5));
-		sldr_speedOfBalls.setValue(userPref.getInt("SPEED_OF_BALLS", 30));
-		sldr_speedOfBasket.setValue(userPref.getInt("SPEED_OF_BASKET", 30));
+		sldr_speedOfBalls.setValue(userPref.getInt("SPEED_OF_BALLS", 2));
+		sldr_speedOfBasket.setValue(userPref.getInt("SPEED_OF_BASKET", 2));
+		sldr_sizeOfBalls.setValue(userPref.getInt("SIZE_OF_BALLS", 50));
 
 		// initialize window
 		initializeSettingsScreen();
@@ -173,7 +189,7 @@ public class AppSettings extends JFrame {
 	 * Screen initializer method
 	 */
 	private void initializeSettingsScreen() {
-		this.setSize(400, 500);
+		this.setSize(400, 520);
 		this.setTitle("Game Settings");
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
@@ -196,6 +212,7 @@ public class AppSettings extends JFrame {
 					userPref.putInt("NUMBER_OF_BALLS", sldr_numberOfBalls.getValue());
 					userPref.putInt("SPEED_OF_BALLS", sldr_speedOfBalls.getValue());
 					userPref.putInt("SPEED_OF_BASKET", sldr_speedOfBasket.getValue());
+					userPref.putInt("SIZE_OF_BALLS", sldr_sizeOfBalls.getValue());
 
 					dispose();
 				}

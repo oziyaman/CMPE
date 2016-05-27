@@ -32,10 +32,11 @@ public class HomeScreen extends JFrame {
 		
 		// default game settings
 		userPref.put("USER_NAME", "guest");
-		userPref.putInt("PERIOD_OF_GAME", 3);
+		userPref.putInt("PERIOD_OF_GAME", 30);
 		userPref.putInt("NUMBER_OF_BALLS", 5);
-		userPref.putInt("SPEED_OF_BALLS", 30);
-		userPref.putInt("SPEED_OF_BASKET", 30);
+		userPref.putInt("SPEED_OF_BALLS", 2);
+		userPref.putInt("SPEED_OF_BASKET", 2);
+		userPref.putInt("SIZE_OF_BALLS", 50);
 
 		// load the logo
 		loadLogo();
@@ -57,7 +58,6 @@ public class HomeScreen extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				new App();
 				dispose();
-
 			}
 		});
 
